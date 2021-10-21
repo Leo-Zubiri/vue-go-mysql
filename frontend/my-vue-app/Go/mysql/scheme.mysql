@@ -1,0 +1,9 @@
+use vuedb;
+
+CREATE TABLE Personas
+	(
+		CodPersona SMALLINT PRIMARY KEY AUTO_INCREMENT,
+		Persona VARCHAR(35),
+		Apellido VARCHAR(35)
+	);
+
