@@ -1,5 +1,10 @@
 # my-vue-app
 
+# Leer los archivos en la carpeta README que indica los recursos necesarios para importar correctamente este proyecto.
+
+
+# Algunas instrucciones de NPM: 
+
 ## Project setup
 ```
 npm install
