@@ -4,6 +4,10 @@
 1. Tener node instalado
 Abrir una terminal e introducir el siguiente comando:
 ```
+npm install -g vue
+```
+ 
+```
 npm install -g @vue/cli
 ```
 Recomendado ejecutar ese comado dos veces para asegurarse que no falte ningún paquete.
