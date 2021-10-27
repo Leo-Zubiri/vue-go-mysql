@@ -12,6 +12,25 @@ import (
 	"github.com/joho/godotenv"
 )
 
+func main() {
+	// Use the thumbnailHandler function
+	http.HandleFunc("/data", setData)
+	http.HandleFunc("/get", getData)
+	http.HandleFunc("/delete", deleteData)
+	http.HandleFunc("/editar", editarUsuario)
+
+	// Serve static files from the frontend/dist directory.
+	fs := http.FileServer(http.Dir("../dist"))
+	http.Handle("/", fs)
+
+	// Start the server.
+	fmt.Println("Server listening on port 3000")
+	log.Panic(
+		http.ListenAndServe(":3000", nil),
+	)
+
+}
+
 //go get github.com/go-sql-driver/mysql
 
 var _ = godotenv.Load(".env") // Cargar del archivo llamado ".env"
@@ -57,24 +76,10 @@ func conectDB() {
 }
 
 type person struct {
+	ID       int    `json:"id"`
 	Nombre   string `json:"nombre"`
 	Apellido string `json:"apellido"`
-}
-
-func main() {
-	// Use the thumbnailHandler function
-	http.HandleFunc("/data", setData)
-
-	// Serve static files from the frontend/dist directory.
-	fs := http.FileServer(http.Dir("../dist"))
-	http.Handle("/", fs)
-
-	// Start the server.
-	fmt.Println("Server listening on port 3000")
-	log.Panic(
-		http.ListenAndServe(":3000", nil),
-	)
-
+	Email    string `json:"email"`
 }
 
 //Recibe datos en formato JSON y los transforma a variables go
@@ -82,22 +87,50 @@ func setData(w http.ResponseWriter, request *http.Request) {
 	decoder := json.NewDecoder(request.Body)
 
 	var data person
-
 	decoder.Decode(&data)
-
-	//fmt.Println(data)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(data); err != nil {
-		panic(err)
-	}
-
-	fmt.Println(data.Nombre)
-	conectDB()
 
 	insertPerson(data)
-	//fmt.Println(data.Apellido)
-	getInfoTableNamed("Personas")
+
+}
+
+func getData(w http.ResponseWriter, request *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.WriteHeader(http.StatusOK)
+
+	getInfoTableNamed("personas", w)
+
+}
+
+func deleteData(w http.ResponseWriter, r *http.Request) {
+	idEmpleado := r.URL.Query().Get("id")
+	fmt.Println(idEmpleado)
+	deleteByID(idEmpleado)
+	http.Redirect(w, r, "/", 301)
+}
+
+func editarUsuario(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method == "POST" {
+		decoder := json.NewDecoder(r.Body)
+		var data person
+		decoder.Decode(&data)
+		//fmt.Println(data)
+
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.WriteHeader(http.StatusOK)
+
+		fmt.Println(data.ID)
+		getByID(data.ID, w)
+	}
+	if r.Method == "UPDATE" {
+
+	}
+
 }

@@ -25,3 +25,8 @@ Para empezar la construccion del proyecto:
 ```
 npm run build
 ```
+
+# Ejecutar proyecto sin interfaz grafica
+```
+npm run serve
+```
